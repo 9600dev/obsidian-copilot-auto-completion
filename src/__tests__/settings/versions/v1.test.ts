@@ -6,7 +6,7 @@ import {
     azureOAIApiSettingsSchema,
     fewShotExampleSchema,
     modelOptionsSchema, ollamaApiSettingsSchema,
-    openAIApiSettingsSchema
+    openAIApiSettingsSchema, anthropicApiSettingsSchema
 } from "../../../settings/versions/shared";
 import Context from "../../../context_detection";
 import * as fs from 'fs';
@@ -70,6 +70,11 @@ describe('settingsSchema', () => {
         model: 'mistral',
 
     });
+    const validAnthropicSettings = anthropicApiSettingsSchema.parse({
+        key: 'abc123',
+        url: 'https://example.com',
+        model: 'claude-instant-1.2'
+    });
     const validTrigger = triggerSchema.parse({type: 'string', value: '# '});
     const validModelOptions = modelOptionsSchema.parse({
         temperature: 0.5,
@@ -88,6 +93,7 @@ describe('settingsSchema', () => {
         azureOAIApiSettings: validAzureSettings,
         openAIApiSettings: validOpenAISettings,
         ollamaApiSettings: validOllamaSettings,
+        anthropicApiSettings: validAnthropicSettings,
         triggers: [validTrigger],
         delay: 1000,
         modelOptions: validModelOptions,
