@@ -38,6 +38,34 @@ class AnthropicApiClient implements ApiClient {
             "anthropic-version": "2023-06-01",
             "x-api-key": this.apiKey,
         };
+
+        messages.forEach(message => {
+            if (message.role === "system") {
+                message.role = "user";
+            }
+        });
+
+        for (let i = 0; i < messages.length - 1; i++) {
+            // Check for consecutive messages with the same role
+            if (messages[i].role === messages[i + 1].role) {
+                const newMessage: ChatMessage = {
+                    content: "Automated response",  // Or any default content you wish to add
+                    role: messages[i].role === "user" ? "assistant" : "user"
+                };
+                messages.splice(i + 1, 0, newMessage);  // Inject the opposite role message
+                i++;  // Skip the newly added message to avoid immediate re-evaluation
+            }
+        }
+
+        // Handle the case where the last message might need an alternation
+        if (messages.length > 1 && messages[messages.length - 1].role === messages[messages.length - 2].role) {
+            const newMessage: ChatMessage = {
+                content: "Automated response",
+                role: messages[messages.length - 1].role === "user" ? "assistant" : "user"
+            };
+            messages.push(newMessage);
+        }
+
         const body = {
             messages,
             model: this.model,
