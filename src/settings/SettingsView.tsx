@@ -34,7 +34,7 @@ import {
 interface IProps {
     onSettingsChanged(settings: Settings): void;
 
-    settings: Settings;
+settings: Settings;
 }
 
 export default function SettingsView(props: IProps): React.JSX.Element {
@@ -61,7 +61,10 @@ export default function SettingsView(props: IProps): React.JSX.Element {
         };
         const ollamaApiSettings = {
             ...settings.ollamaApiSettings,
-        }
+        };
+        const anthropicApiSettings = {
+            ...settings.anthropicApiSettings,
+        };
 
         const newSettings: Settings = {
             ...DEFAULT_SETTINGS,
@@ -69,6 +72,7 @@ export default function SettingsView(props: IProps): React.JSX.Element {
             azureOAIApiSettings,
             openAIApiSettings,
             ollamaApiSettings,
+            anthropicApiSettings,
             advancedMode: settings.advancedMode,
         };
         updateSettings(newSettings);
@@ -215,6 +219,62 @@ export default function SettingsView(props: IProps): React.JSX.Element {
                 </>
             );
         }
+        if (settings.apiProvider === "anthropic") {
+            return (
+                <>
+                    <TextSettingItem
+                        name={"Anthropic API URL"}
+                        description={
+                            "The URL used in the requests."
+                        }
+                        placeholder={"Your API URL..."}
+                        value={settings.anthropicApiSettings.url}
+                        errorMessage={errors.get("anthropicApiSettings.url")}
+                        setValue={(value: string) =>
+                            updateSettings({
+                                anthropicApiSettings: {
+                                    ...settings.anthropicApiSettings,
+                                    url: value,
+                                },
+                            })
+                        }
+                    />
+                    <TextSettingItem
+                        name={"Anthropic API key"}
+                        description={"The API key used in the requests."}
+                        placeholder={"Your API key..."}
+                        password
+                        value={settings.anthropicApiSettings.key}
+                        errorMessage={errors.get("anthropicApiSettings.key")}
+                        setValue={(value: string) =>
+                            updateSettings({
+                                anthropicApiSettings: {
+                                    ...settings.anthropicApiSettings,
+                                    key: value,
+                                },
+                            })
+                        }
+                    />
+                    <TextSettingItem
+                        name={"Model"}
+                        description={"The value of the model parameter in the request body."}
+                        placeholder="claude-instant-1.2"
+                        value={settings.anthropicApiSettings.model}
+                        setValue={(value: string) =>
+                            updateSettings({
+                                anthropicApiSettings: {
+                                    ...settings.anthropicApiSettings,
+                                    model: value,
+                                }
+                            })
+                        }
+                        errorMessage={errors.get("anthropicApiSettings.model")}
+                    />
+
+                    <ConnectivityCheck key={"anthropic"} settings={settings}/>
+                </>
+            );
+        }
     };
 
     return (
@@ -243,14 +303,15 @@ export default function SettingsView(props: IProps): React.JSX.Element {
                 }
                 value={settings.apiProvider}
                 setValue={(value: string) => {
-                    if (value === "openai" || value === "azure" || value === "ollama") {
+                    if (value === "openai" || value === "azure" || value === "ollama" || value === "anthropic") {
                         updateSettings({apiProvider: value});
                     }
                 }}
                 options={{
                     openai: "OpenAI API",
                     azure: "Azure OAI API",
-                    ollama: "Self-hosted OLLAMA API"
+                    ollama: "Self-hosted OLLAMA API",
+                    anthropic: "Anthropic API"
                 }}
                 errorMessage={errors.get("apiProvider")}
             />

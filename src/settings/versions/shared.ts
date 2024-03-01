@@ -32,6 +32,12 @@ export const ollamaApiSettingsSchema = z.object({
     model: z.string(),
 }).strict();
 
+export const anthropicApiSettingsSchema = z.object({
+    key: z.string(),
+    url: z.string().url(),
+    model: z.string(),
+}).strict();
+
 export const modelOptionsSchema = z.object({
     temperature: z.number()
         .min(0, {message: `Temperature must be at least ${MIN_TEMPERATURE}`})

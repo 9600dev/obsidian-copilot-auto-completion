@@ -28,6 +28,7 @@ import {
     MAX_MAX_CHAR_LIMIT,
     MIN_DELAY,
     MIN_MAX_CHAR_LIMIT,
+    anthropicApiSettingsSchema,
     ollamaApiSettingsSchema,
 } from "../shared";
 import {z} from "zod";
@@ -61,10 +62,11 @@ export const settingsSchema = z.object({
     version: z.literal("1"),
     enabled: z.boolean(),
     advancedMode: z.boolean(),
-    apiProvider: z.enum(['azure', 'openai', "ollama"]),
+    apiProvider: z.enum(['azure', 'openai', "ollama", "anthropic"]),
     azureOAIApiSettings: azureOAIApiSettingsSchema,
     openAIApiSettings: openAIApiSettingsSchema,
     ollamaApiSettings: ollamaApiSettingsSchema,
+    anthropicApiSettings: anthropicApiSettingsSchema,
     triggers: z.array(triggerSchema),
     delay: z.number().int().min(MIN_DELAY, {message: "Delay must be between 0ms and 2000ms"}).max(MAX_DELAY, {message: "Delay must be between 0ms and 2000ms"}),
     modelOptions: modelOptionsSchema,
@@ -123,6 +125,11 @@ export const DEFAULT_SETTINGS: Settings = {
         url: "http://localhost:11434/api/chat",
         model: "",
     },
+    anthropicApiSettings: {
+        key: "",
+        url: "https://api.anthropic.com/v1/messages",
+        model: "claude-instant-1.2",
+    },
 
     // Trigger settings
     triggers: [
@@ -164,7 +171,7 @@ export const DEFAULT_SETTINGS: Settings = {
     systemMessage: `Your job is to predict the most logical text that should be written at the location of the <mask/>.
 Your answer can be either code, a single word, or multiple sentences.
 If the <mask/> is in the middle of a partial sentence, your answer should only be the 1 or 2 words fixes the sentence and not the entire sentence.
-You are not allowed to have any overlapping text directly surrounding the <mask/>.  
+You are not allowed to have any overlapping text directly surrounding the <mask/>.
 Your answer must be in the same language as the text directly surrounding the <mask/>.
 Your response must have the following format:
 THOUGHT: here, you reason about the answer; use the 80/20 principle to be brief.
