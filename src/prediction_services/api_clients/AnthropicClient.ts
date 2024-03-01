@@ -49,7 +49,7 @@ class AnthropicApiClient implements ApiClient {
             // Check for consecutive messages with the same role
             if (messages[i].role === messages[i + 1].role) {
                 const newMessage: ChatMessage = {
-                    content: "Automated response",  // Or any default content you wish to add
+                    content: "Thanks.",  // Or any default content you wish to add
                     role: messages[i].role === "user" ? "assistant" : "user"
                 };
                 messages.splice(i + 1, 0, newMessage);  // Inject the opposite role message
